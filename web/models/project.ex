@@ -21,3 +21,11 @@ defmodule TodoElixir.Project do
     |> cast(params, @required_fields, @optional_fields)
   end
 end
+
+defimpl Poison.Encoder, for: TodoElixir.Project do
+  def encode(model, options) do
+    model
+    |> Map.take([:id, :name])
+    |> Poison.Encoder.encode(options)
+  end
+end
