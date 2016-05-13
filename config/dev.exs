@@ -35,8 +35,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :todo_elixir, TodoElixir.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "hodak",
+  password: "",
   database: "todo_elixir_dev",
   hostname: "localhost",
   pool_size: 10
