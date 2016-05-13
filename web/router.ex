@@ -11,6 +11,10 @@ defmodule TodoElixir.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+
+    scope "/api", TodoElixir.Api do
+      get "/projects", ProjectsController, :index
+    end
   end
 
   scope "/", TodoElixir do
