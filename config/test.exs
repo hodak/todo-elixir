@@ -12,8 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :todo_elixir, TodoElixir.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "hodak",
+  password: "",
   database: "todo_elixir_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
