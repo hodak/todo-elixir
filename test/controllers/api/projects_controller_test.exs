@@ -1,6 +1,7 @@
 defmodule TodoElixir.Api.ProjectsControllerTest do
   use TodoElixir.ConnCase
 
+  # index
   test "it returns empty array when there are no projects", %{conn: conn} do
     conn = get conn, "/api/projects"
     response = json_response(conn, 200)
@@ -31,5 +32,20 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
     assert Enum.count(response["projects"]) == 2
     assert Enum.at(response["projects"], 0) == %{"id" => hodor_project.id, "name" => "Hodor"}
     assert Enum.at(response["projects"], 1) == %{"id" => inbox_project.id, "name" => "Inbox"}
+  end
+
+  # create
+  test "it creates a project when params are valid and returns this project", %{conn: conn} do
+    conn = post conn, "/api/projects", %{project: %{name: "Hodor"}}
+    response = json_response(conn, 200)
+    new_project = TodoElixir.Repo.one(TodoElixir.Project)
+    assert response["project"]["id"] == new_project.id
+    assert response["project"]["name"] == "Hodor"
+  end
+
+  test "it doesn't create a project when it is invalid", %{conn: conn} do
+    conn = post conn, "/api/projects", %{project: %{name: ""}}
+    response = json_response(conn, 422)
+    assert response["errors"] == %{"name" => ["should be at least 1 character(s)"]}
   end
 end

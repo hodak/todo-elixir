@@ -13,7 +13,7 @@ defmodule TodoElixir.Router do
     plug :accepts, ["json"]
 
     scope "/api", TodoElixir.Api do
-      get "/projects", ProjectsController, :index
+      resources "/projects", ProjectsController, only: [:index, :create]
     end
   end
 
