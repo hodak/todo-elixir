@@ -22,11 +22,11 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
   # order changes in the future
   test "it returns multiple projects when multiple exist", %{conn: conn} do
     hodor_project =
-      TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"}) |>
-      TodoElixir.Repo.insert!
+      TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"})
+      |> TodoElixir.Repo.insert!
     inbox_project =
-      TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Inbox"}) |>
-      TodoElixir.Repo.insert!
+      TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Inbox"})
+      |> TodoElixir.Repo.insert!
     conn = get conn, "/api/projects"
     response = json_response(conn, 200)
     assert Enum.count(response["projects"]) == 2
@@ -47,5 +47,26 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
     conn = post conn, "/api/projects", %{project: %{name: ""}}
     response = json_response(conn, 422)
     assert response["errors"] == %{"name" => ["should be at least 1 character(s)"]}
+  end
+
+  # delete
+  test "it deletes project" do
+    project =
+      TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"})
+      |> TodoElixir.Repo.insert!
+    conn = delete conn, "/api/projects/#{project.id}"
+    assert conn.status == 200
+    assert conn.resp_body == ""
+    assert Repo.one(from p in TodoElixir.Project, select: count(p.id)) == 0
+  end
+
+  test "it returns 404 when project with given id doesn't exist" do
+    project =
+      TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"})
+      |> TodoElixir.Repo.insert!
+    conn = delete conn, "/api/projects/#{project.id + 1}"
+    assert conn.status == 404
+    assert conn.resp_body == ""
+    assert Repo.one(from p in TodoElixir.Project, select: count(p.id)) == 1
   end
 end

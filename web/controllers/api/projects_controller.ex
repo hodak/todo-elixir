@@ -19,4 +19,15 @@ defmodule TodoElixir.Api.ProjectsController do
       |> render("error.json", changeset: changeset)
     end
   end
+
+  def delete(conn, %{"id" => id}) do
+    project = Repo.one(from p in Project, where: p.id == ^id)
+    if project do
+      case Repo.delete(project) do
+        {:ok, _} -> send_resp(conn, 200, "")
+      end
+    else
+      send_resp(conn, 404, "")
+    end
+  end
 end
