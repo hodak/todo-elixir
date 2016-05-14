@@ -35,5 +35,6 @@ defmodule TodoElixir.Endpoint do
     key: "_todo_elixir_key",
     signing_salt: "4Bb8tY/B"
 
+  plug CORSPlug
   plug TodoElixir.Router
 end
