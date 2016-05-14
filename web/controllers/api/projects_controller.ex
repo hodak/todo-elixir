@@ -4,7 +4,7 @@ defmodule TodoElixir.Api.ProjectsController do
 
   def index(conn, _params) do
     projects = Repo.all(Project)
-    json(conn, %{projects: projects})
+    render(conn, "index.json", projects: projects)
   end
 
   def create(conn, %{"project" => project_params}) do
@@ -12,7 +12,7 @@ defmodule TodoElixir.Api.ProjectsController do
 
     if changeset.valid? do
       project = Repo.insert!(changeset)
-      json(conn, %{project: project})
+      render(conn, "show.json", project: project)
     else
       conn
       |> put_status(:unprocessable_entity)
