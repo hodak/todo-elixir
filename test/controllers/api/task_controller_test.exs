@@ -44,4 +44,24 @@ defmodule TodoElixir.Api.TaskControllerTest do
     response = json_response(conn, 200)
     assert response["tasks"] == []
   end
+
+  test "it doesn't return completed tasks" do
+    project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
+    completed_task =
+      Ecto.build_assoc(project, :tasks, text: "Buy potatoes", completed: true)
+      |> Repo.insert!
+    pending_task =
+      Ecto.build_assoc(project, :tasks, text: "Make potato pizza", completed: false)
+      |> Repo.insert!
+    conn = get conn, "/api/projects/#{project.id}/tasks"
+    response = json_response(conn, 200)
+    assert Enum.count(response["tasks"]) == 1
+    assert Enum.at(response["tasks"], 0)["id"] == pending_task.id
+  end
+
+  test "it returns 404 when project with given id doesn't exist" do
+    project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
+    conn = get conn, "/api/projects/#{project.id + 1}/tasks"
+    assert conn.status == 404
+  end
 end
