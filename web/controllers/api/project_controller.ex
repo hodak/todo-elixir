@@ -1,4 +1,4 @@
-defmodule TodoElixir.Api.ProjectsController do
+defmodule TodoElixir.Api.ProjectController do
   use TodoElixir.Web, :controller
   alias TodoElixir.Project
 

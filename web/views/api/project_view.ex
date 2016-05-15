@@ -1,4 +1,4 @@
-defmodule TodoElixir.Api.ProjectsView do
+defmodule TodoElixir.Api.ProjectView do
   use TodoElixir.Web, :view
 
   def render("index.json", %{projects: projects}) do

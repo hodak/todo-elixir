@@ -1,4 +1,4 @@
-defmodule TodoElixir.Api.ProjectsControllerTest do
+defmodule TodoElixir.Api.ProjectControllerTest do
   use TodoElixir.ConnCase
 
   # index
