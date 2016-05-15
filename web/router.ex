@@ -14,7 +14,7 @@ defmodule TodoElixir.Router do
 
     scope "/api", TodoElixir.Api do
       resources "/projects", ProjectController, only: [:index, :create, :delete] do
-        resources "/tasks", TaskController, only: [:index]
+        resources "/tasks", TaskController, only: [:index, :create]
       end
     end
   end

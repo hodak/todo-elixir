@@ -1,7 +1,7 @@
 defmodule TodoElixir.Api.TaskControllerTest do
   use TodoElixir.ConnCase
 
-  alias TodoElixir.{Project}
+  alias TodoElixir.{Project, Task}
 
   # index
   test "it returns task that belongs to given project" do
@@ -47,7 +47,7 @@ defmodule TodoElixir.Api.TaskControllerTest do
 
   test "it doesn't return completed tasks" do
     project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
-    completed_task =
+    _completed_task =
       Ecto.build_assoc(project, :tasks, text: "Buy potatoes", completed: true)
       |> Repo.insert!
     pending_task =
@@ -63,5 +63,25 @@ defmodule TodoElixir.Api.TaskControllerTest do
     project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
     conn = get conn, "/api/projects/#{project.id + 1}/tasks"
     assert conn.status == 404
+  end
+
+  # create
+  test "it creates task for given project" do
+    project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
+
+    conn = post conn, "/api/projects/#{project.id}/tasks", %{task: %{text: "Task"}}
+    response = json_response(conn, 200)
+
+    task = Repo.one(Task)
+    assert task.text == "Task"
+    assert task.completed == false
+    assert task.project_id == project.id
+
+    assert response["task"] == %{
+      "id" => task.id,
+      "project_id" => project.id,
+      "text" => "Task",
+      "completed" => false,
+    }
   end
 end
