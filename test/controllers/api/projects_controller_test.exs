@@ -10,7 +10,7 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
 
   test "it returns a project when such exists", %{conn: conn} do
     changeset = TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"})
-    project = TodoElixir.Repo.insert!(changeset)
+    project = Repo.insert!(changeset)
     conn = get conn, "/api/projects"
     response = json_response(conn, 200)
     assert Enum.count(response["projects"]) == 1
@@ -23,10 +23,10 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
   test "it returns multiple projects when multiple exist", %{conn: conn} do
     hodor_project =
       TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"})
-      |> TodoElixir.Repo.insert!
+      |> Repo.insert!
     inbox_project =
       TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Inbox"})
-      |> TodoElixir.Repo.insert!
+      |> Repo.insert!
     conn = get conn, "/api/projects"
     response = json_response(conn, 200)
     assert Enum.count(response["projects"]) == 2
@@ -38,7 +38,7 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
   test "it creates a project when params are valid and returns this project", %{conn: conn} do
     conn = post conn, "/api/projects", %{project: %{name: "Hodor"}}
     response = json_response(conn, 200)
-    new_project = TodoElixir.Repo.one(TodoElixir.Project)
+    new_project = Repo.one(TodoElixir.Project)
     assert response["project"]["id"] == new_project.id
     assert response["project"]["name"] == "Hodor"
   end
@@ -53,7 +53,7 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
   test "it deletes project" do
     project =
       TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"})
-      |> TodoElixir.Repo.insert!
+      |> Repo.insert!
     conn = delete conn, "/api/projects/#{project.id}"
     assert conn.status == 200
     assert conn.resp_body == ""
@@ -63,7 +63,7 @@ defmodule TodoElixir.Api.ProjectsControllerTest do
   test "it returns 404 when project with given id doesn't exist" do
     project =
       TodoElixir.Project.changeset(%TodoElixir.Project{}, %{name: "Hodor"})
-      |> TodoElixir.Repo.insert!
+      |> Repo.insert!
     conn = delete conn, "/api/projects/#{project.id + 1}"
     assert conn.status == 404
     assert conn.resp_body == ""
