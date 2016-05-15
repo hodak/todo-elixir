@@ -13,7 +13,9 @@ defmodule TodoElixir.Router do
     plug :accepts, ["json"]
 
     scope "/api", TodoElixir.Api do
-      resources "/projects", ProjectController, only: [:index, :create, :delete]
+      resources "/projects", ProjectController, only: [:index, :create, :delete] do
+        resources "/tasks", TaskController, only: [:index]
+      end
     end
   end
 
