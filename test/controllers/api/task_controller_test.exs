@@ -90,4 +90,34 @@ defmodule TodoElixir.Api.TaskControllerTest do
     conn = post conn, "/api/projects/#{project.id + 1}/tasks", %{task: %{text: "Task"}}
     assert conn.status == 404
   end
+
+  test "it doesn't create task when it is invalid" do
+    project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
+    conn = post conn, "/api/projects/#{project.id}/tasks", %{task: %{text: ""}}
+    response = json_response(conn, 422)
+    assert response["errors"] == %{
+      "text" => ["should be at least 1 character(s)"],
+    }
+  end
+
+  test "it doesn't take id passed in task's param into consideration" do
+    project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
+    task = Task.changeset(%Task{}, %{text: "Task"}) |> Repo.insert!
+    conn = post conn, "/api/projects/#{project.id}/tasks", %{
+      task: %{id: task.id, text: "Task"}
+    }
+    response = json_response(conn, 200)
+    assert Repo.one(from t in Task, select: count(t.id)) == 2
+    assert response["task"]["id"] != task.id
+  end
+
+  test "it doesn't take project_id passed in tasks's params into consideration" do
+    project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
+    other_project = Project.changeset(%Project{}, %{name: "Other P."}) |> Repo.insert!
+    conn = post conn, "/api/projects/#{project.id}/tasks", %{
+      task: %{project_id: other_project.id, text: "Task"}
+    }
+    response = json_response(conn, 200)
+    assert response["task"]["project_id"] == project.id
+  end
 end

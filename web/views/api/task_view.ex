@@ -12,6 +12,10 @@ defmodule TodoElixir.Api.TaskView do
     %{task: serialize_task(task)}
   end
 
+  def render("error.json", %{changeset: changeset}) do
+    render_errors(changeset)
+  end
+
   defp serialize_task(task) do
     Map.take(task, [:id, :text, :project_id, :completed])
   end

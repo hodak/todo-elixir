@@ -17,13 +17,15 @@ defmodule TodoElixir.Api.TaskController do
     case get_project(project_id) do
       nil -> send_resp(conn, 404, "")
       project ->
-        changeset = Task.changeset(%Task{project_id: project.id}, task_params)
+        changeset = Task.changeset(%Task{}, Map.put(task_params, "project_id", project.id))
 
         if changeset.valid? do
           task = Repo.insert!(changeset)
           render(conn, "show.json", task: task)
         else
-          # pending
+          conn
+          |> put_status(:unprocessable_entity)
+          |> render("error.json", changeset: changeset)
         end
     end
   end

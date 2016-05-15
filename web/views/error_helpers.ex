@@ -32,4 +32,9 @@ defmodule TodoElixir.ErrorHelpers do
   def translate_error(msg) do
     Gettext.dgettext(TodoElixir.Gettext, "errors", msg)
   end
+
+  def render_errors(changeset) do
+    errors = Ecto.Changeset.traverse_errors(changeset, &translate_error/1)
+    %{errors: errors}
+  end
 end
