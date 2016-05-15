@@ -10,7 +10,7 @@ defmodule TodoElixir.Task do
   end
 
   @required_fields ~w(text completed)
-  @optional_fields ~w()
+  @optional_fields ~w(project_id)
 
   @doc """
   Creates a changeset based on the `model` and `params`.
@@ -21,5 +21,6 @@ defmodule TodoElixir.Task do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_length(:text, min: 1)
   end
 end
