@@ -84,4 +84,10 @@ defmodule TodoElixir.Api.TaskControllerTest do
       "completed" => false,
     }
   end
+
+  test "it returns 404 for creation when project with given id doesn't exist" do
+    project = Project.changeset(%Project{}, %{name: "Hodor"}) |> Repo.insert!
+    conn = post conn, "/api/projects/#{project.id + 1}/tasks", %{task: %{text: "Task"}}
+    assert conn.status == 404
+  end
 end
