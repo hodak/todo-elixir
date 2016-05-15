@@ -3,6 +3,7 @@ defmodule TodoElixir.Project do
 
   schema "projects" do
     field :name, :string
+    has_many :tasks, TodoElixir.Task, on_delete: :delete_all
 
     timestamps
   end
