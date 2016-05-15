@@ -16,6 +16,7 @@ defmodule TodoElixir.Router do
       resources "/projects", ProjectController, only: [:index, :create, :delete] do
         resources "/tasks", TaskController, only: [:index, :create]
       end
+      resources "/tasks", TaskController, only: [:delete]
     end
   end
 

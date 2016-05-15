@@ -30,7 +30,16 @@ defmodule TodoElixir.Api.TaskController do
     end
   end
 
+  def delete(conn, %{"id" => id}) do
+    case Repo.one(from(t in Task, where: t.id == ^id)) do
+      nil -> send_resp(conn, 404, "")
+      task -> case Repo.delete(task) do
+        {:ok, _} -> send_resp(conn, 200, "")
+      end
+    end
+  end
+
   defp get_project(project_id) do
-    Repo.one from p in Project, where: p.id == ^project_id
+    Repo.one(from(p in Project, where: p.id == ^project_id))
   end
 end

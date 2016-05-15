@@ -120,4 +120,19 @@ defmodule TodoElixir.Api.TaskControllerTest do
     response = json_response(conn, 200)
     assert response["task"]["project_id"] == project.id
   end
+
+  # delete
+  test "it deletes a task" do
+    task = Task.changeset(%Task{}, %{text: "Task"}) |> Repo.insert!
+    conn = delete conn, "/api/tasks/#{task.id}"
+    assert conn.status == 200
+    assert Repo.one(from(t in Task, select: count(t.id))) == 0
+  end
+
+  test "it returns 404 when task with given id doesn't exist" do
+    task = Task.changeset(%Task{}, %{text: "Task"}) |> Repo.insert!
+    conn = delete conn, "/api/tasks/#{task.id + 1}"
+    assert conn.status == 404
+    assert Repo.one(from(t in Task, select: count(t.id))) == 1
+  end
 end
